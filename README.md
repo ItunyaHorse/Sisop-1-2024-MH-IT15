@@ -82,6 +82,7 @@ echo "d. purchase date/order date dan amount/quantity dari nama Adriaens:"
 grep "Adriaens" Sandbox.csv | awk -F ',' '{print $2 "," $18}'
 ```
 kode "grep "Adriaens" Sandbox.csv" itu untuk mencari nama "Adriaens" di "Sandbox.csv".
+
 kode "awk -F ',' '{print $2 "," $18}'" itu untuk mengekstrak data dari column 2(Order Date) dan column 18(Quantity).
 
 Output:
