@@ -114,4 +114,89 @@ Script kemudian berpindah ke folder genshin_character yang diasumsikan hasil eks
 
 Baris selanjutnya menggunakan awk untuk mencari baris spesifik di file list_character.csv yang mengandung nama file $new_name. Kolom dalam file list_character.csv diasumsikan dipisahkan dengan tanda koma (","). Hasil dari awk berupa format Region-Name-Elemen-Senjata.jpg disimpan di variabel baru. Terakhir, script menggunakan mv lagi untuk mengubah nama file menjadi format yang didapat dari baru.jpg.
 
+```bash
+mkdir Mondstat Liyue Inazuma Sumeru Fontaine
 
+for file in *.jpg;
+ do
+ negara=$(echo $file | awk -F "-" '{print $1}')
+ if [ "$negara" == "Mondstat" ]; then
+ mv "$file" "Mondstat"
+ elif [ "$negara" == "Liyue" ]; then
+ mv "$file" "Liyue"
+ elif [ "$negara" == "Sumeru" ]; then
+ mv "$file" "Sumeru"
+ elif [ "$negara" == "Inazuma" ]; then
+ mv "$file" "Inazuma"
+ else
+ mv "$file" "Fontaine"
+fi
+ done
+
+cd ..
+awk '
+BEGIN {}
+/Bow/ { ++b }
+/Catalyst/ { ++c }
+/Claymore/  { ++c2 }
+/Polearm/ { ++p }
+/Sword/ { ++s }
+END { print "Bow:" b "\nCatalyst:" c "\nCatalyst:" c2 "\nPolearm:" p "\nSword:" s }' list_character.csv
+
+rm *.zip *.csv
+```
+Pada command selanjutnya, pertama-tama, kita membuat folder untuk region-region agar file file tersebut bisa dimasukkan ke dalam folder sesuai dengan nama filenya. Di kode ini, loop for digunakan memproses setiap file yang terdapat di folder genshin_character. Perintah awk mengekstrak informasi region dari list_character.csv. Perintah if memindahkan file-file jpg tersebut ke folder sesuai dengan regionnya masing-masing.  
+
+Terakhir, pada script ini, kita disuruh untuk menghitung jumlah senjata dan menghapus beberapa file. Maka dari itu, digunakan awk untuk menghitung jumlah senjata yang ada di list_character.scv tersebut. Sedangkan untuk menghapus file file tidak pentingnya, kita bisa menggunakan fungsi rm untuk membuang file file bertipe zip dan csv.
+
+```bash
+cd genshin_character
+for folder in *;
+do
+ for file in $folder/*;
+  do
+  steghide extract -sf "$file" -xf "$file.txt" -p "" -q
+  rahasia=$(cat "$file.txt")
+  waktu=$(date +"%d/%m/%y %H:%M:%S")
+  alamat=$(realpath "$file.txt")
+
+  if [[ $rahasia == 68747470 ]];
+  then
+  echo "[$waktu] [FOUND] [$alamat]"
+  exit 
+  else
+  echo "[$waktu] [NOT FOUND] [$alamat]" 
+  rm "$file.txt"
+  fi >> image.log
+
+  sleep 1
+  done
+done
+  mv "image.log" ".." 
+```
+Pada script search.sh ini, script diawali dengan cd genshin_character untuk berpindah ke folder genshin_character tempat file gambar yang dicurigai mengandung pesan tersembunyi berada. Loop for folder in * digunakan untuk iterasi melalui semua folder di dalam genshin_character. Variabel folder akan berisi nama masing-masing folder yang akan diproses. 
+
+
+Loop for file in $folder/* digunakan untuk iterasi melalui semua file di dalam folder yang sedang diproses (folder yang didapat dari loop sebelumnya). Variabel file akan berisi path lengkap dari setiap file yang akan diperiksa. Perintah steghide extract -sf "$file" -xf "$file.txt" -p "" -q digunakan untuk mengekstraksi pesan tersembunyi dari file gambar $file. Dengan penjelasan sebagai berikut:
+        -sf : opsi untuk menentukan file sumber (source file) yang akan diekstraksi pesannya.
+        -xf : opsi untuk menentukan file keluaran (extraction file) tempat menyimpan pesan yang diekstraksi.
+        -p "" : opsi untuk password (kosong dalam kasus ini).
+        -q : opsi untuk menjalankan perintah secara diam (quiet mode).
+
+Baris rahasia=$(cat "$file.txt") digunakan untuk membaca isi file hasil ekstraksi ($file.txt) dan menyimpannya ke variabel rahasia.Perintah waktu=$(date +"%d/%m/%y %H:%M:%S") digunakan untuk mendapatkan tanggal dan waktu saat ini, disimpan ke variabel waktu dengan format "HH/MM/YYYY HH:MM:SS".
+Perintah alamat=$(realpath "$file.txt") digunakan untuk mendapatkan path lengkap dari file hasil ekstraksi ($file.txt) secara absolut (resolved path), disimpan ke variabel alamat.
+Perintah if [[ $rahasia == 68747470 ]] digunakan untuk mengecek isi variabel rahasia. [[ ... ]] adalah operator conditional expression untuk melakukan pengecekan.
+$rahasia == 68747470 membandingkan isi rahasia dengan nilai heksadesimal dari string "http" (68 74 74 70). ika kondisi if terpenuhi (pesan tersembunyi ditemukan):
+
+    Script akan menampilkan pesan "[$waktu] [FOUND] [$alamat]" yang menunjukkan waktu, status "FOUND" (ditemukan), dan path lengkap file hasil ekstraksi.
+    Perintah exit digunakan untuk menghentikan keseluruhan script setelah pesan tersembunyi pertama ditemukan.
+    
+Jika kondisi if tidak terpenuhi (pesan tersembunyi tidak ditemukan):
+
+    Script akan menampilkan pesan "[$waktu] [NOT FOUND] [$alamat]" yang menunjukkan waktu, status "NOT FOUND" (tidak ditemukan), dan path lengkap file hasil ekstraksi. Perintah rm "$file.txt" digunakan untuk menghapus file hasil ekstraksi sementara.
+
+Seluruh output (baik pesan "FOUND" atau "NOT FOUND") akan diarahkan ke file "image.log" menggunakan operator pengalihan output >>. Perintah sleep 1 digunakan untuk memberikan jeda selama 1 detik di antara proses pemeriksaan file. Setelah selesai memeriksa semua file di dalam semua folder, script akan memindahkan file log "image.log" ke folder di atas folder genshin_character menggunakan perintah mv "image.log" "..". 
+
+Soal ini tidak dapat saya selesaikan. Hal ini disebabkan karena saya mengalami suatu kendala berupa tidak bisa menemukan file yang tersebunyi di dalam jpg tersebut. 
+
+ 
