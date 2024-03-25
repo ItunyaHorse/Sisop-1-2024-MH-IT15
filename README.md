@@ -186,7 +186,7 @@ Loop for file in $folder/* digunakan untuk iterasi melalui semua file di dalam f
 Baris rahasia=$(cat "$file.txt") digunakan untuk membaca isi file hasil ekstraksi ($file.txt) dan menyimpannya ke variabel rahasia.Perintah waktu=$(date +"%d/%m/%y %H:%M:%S") digunakan untuk mendapatkan tanggal dan waktu saat ini, disimpan ke variabel waktu dengan format "HH/MM/YYYY HH:MM:SS".
 Perintah alamat=$(realpath "$file.txt") digunakan untuk mendapatkan path lengkap dari file hasil ekstraksi ($file.txt) secara absolut (resolved path), disimpan ke variabel alamat.
 Perintah if [[ $rahasia == 68747470 ]] digunakan untuk mengecek isi variabel rahasia. [[ ... ]] adalah operator conditional expression untuk melakukan pengecekan.
-$rahasia == 68747470 membandingkan isi rahasia dengan nilai heksadesimal dari string "http" (68 74 74 70). ika kondisi if terpenuhi (pesan tersembunyi ditemukan):
+$rahasia == 68747470 membandingkan isi rahasia dengan nilai heksadesimal dari string "http" (68 74 74 70). Jika kondisi if terpenuhi (pesan tersembunyi ditemukan):
 
     Script akan menampilkan pesan "[$waktu] [FOUND] [$alamat]" yang menunjukkan waktu, status "FOUND" (ditemukan), dan path lengkap file hasil ekstraksi.
     Perintah exit digunakan untuk menghentikan keseluruhan script setelah pesan tersembunyi pertama ditemukan.
