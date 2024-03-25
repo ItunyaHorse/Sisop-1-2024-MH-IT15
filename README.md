@@ -28,10 +28,10 @@ highest_sales_customer=$(tail -n +2 Sandbox.csv | awk -F ',' '{print $6 "," $17}
 echo "a. Nama pembeli dengan total sales paling tinggi:"
 echo $highest_sales_customer | cut -d ',' -f1
 ```
-kode "awk -F ',' '{print $6 "," $17}'" itu untuk mengekstrak data dari column 6(CustomerName) dan column 17(Sales).
+kode "awk -F ',' '{print $6 "," $17}'" itu untuk mengekstrak data dari column 6(Customer Name) dan column 17(Sales).
 kode "sort -t ',' -k2 -nr" itu untuk sort kedua data yang di ekstrak bedasarkan column 17(Sales) di urutan menurun.
-kode "head -n 1" itu untuk mengambil barisan paling pertama dari output sort sebelumnya
-
+kode "head -n 1" itu untuk mengambil barisan paling pertama dari output sort sebelumnya.
+kode "cut -d ',' -f1" itu untuk mengekstrak dan hanya mengeprint cloumn 6(Customer Name) dari barisan yang diambil sebelumnya
 
 ```bash
 #1.b
