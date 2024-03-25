@@ -88,3 +88,30 @@ kode "awk -F ',' '{print $2 "," $18}'" itu untuk mengekstrak data dari column 2(
 Output:
 
 ![image](https://drive.google.com/uc?export=view&id=1Tx4lzv4OE2sRsir1fNOWDm6xnqTE6Dbh)
+
+## Soal no 3
+Dikerjakan oleh **Michael Kenneth Salim (5027231008)**
+
+Pada soal nomer 3 ini, kita pada dasarnya membuat 2 script untuk download, rename dan decode file yang terdapat di dalamnya.
+
+```bash
+wget -O Genshin.zip 'https://drive.google.com/uc?export=download&id=1oGHdTf4_76_RacfmQIV4i7os4sGwa9vN'
+unzip -o "*.zip"
+unzip -o "*.zip"
+cd genshin_character
+for file in *.jpg;
+ do
+   new_name=$(echo $file | xxd -r -p)
+   mv -- "$file" "$new_name.jpg"
+
+   baru=$(awk -F, "/$new_name/"'{OFS=0;print $2 "-" $1 "-" $3 "-" $4}' ../list_character.csv)
+   mv -- "$new_name.jpg" "$baru.jpg"
+done
+```
+Dalam soal nomer 3 ini, kita diminta untuk download, decode, dan rename file yang memiliki format .jpg. Seperti yang bisa kita lihat di atas ini, kita menggunakan fungsi wget dan unzip untuk download file dari link yang telah diberikan dan unzip file tersebut. Mengapa terdapat 2 kali unzip? Hal ini disebabkan karena didalam file zip tersebut terdapat file zip lainnya sehingga diperlukan untuk dilakukan zip sebanyak 2x. Ditambah lagi, -o pada unzip tersebut berperan dalam overwrite data agar data yang di unzip tidak bertumpukan satu sama lain.  
+
+Script kemudian berpindah ke folder genshin_character yang diasumsikan hasil ekstrak dari file Genshin.zip. Loop for file in *.jpg digunakan untuk memproses setiap file berekstensi .jpg di folder tersebut. Perintah xxd -r -p digunakan untuk mengubah nama file yang terisi dengan hex menjadi format teks, yang mana hasilnya disimpan di variabel new_name. Script kemudian menjalankan perintah mv untuk mengubah nama file asli menjadi $new_name.jpg. 
+
+Baris selanjutnya menggunakan awk untuk mencari baris spesifik di file list_character.csv yang mengandung nama file $new_name. Kolom dalam file list_character.csv diasumsikan dipisahkan dengan tanda koma (","). Hasil dari awk berupa format Region-Name-Elemen-Senjata.jpg disimpan di variabel baru. Terakhir, script menggunakan mv lagi untuk mengubah nama file menjadi format yang didapat dari baru.jpg.
+
+
