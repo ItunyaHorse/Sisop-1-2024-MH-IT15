@@ -183,7 +183,8 @@ main() {
 }
 ```
 Kode diatas merupakan fungsi utama untuk bisa login atau forgot password.
-![image](https://drive.google.com/uc?export=view&id=1QIajBNdsIDwVravKKbF-DD03hguWX-SG)
+Output:
+![image](https://drive.google.com/uc?export=view&id=1QIajBNdsIDwVravKKbFDD03hguWXSG).
 
 ```bash
 login() {
@@ -218,7 +219,8 @@ login() {
 }
 ```
 Kode login berfungsi untuk masuk ke email yang telah diregister tadi. fungsi conditional if digunakan pada "if != grep -q "^$email:" ~/soal2/users/users.txt" berfungsi untukk mengecek apakah email tersedia atau tidak apabila tidak maka login gagal. lalu "if [ "$password" = "$decrypted_password" ]" berfungsi untuk mengecek apakah password sama apabila sama maka login berhasil.
-![image](https://drive.google.com/uc?export=view&id=1IIIr7A8H1RBO5jLxAN5vTLaB2GG8cMOz)
+Output:
+![image](https://drive.google.com/uc?export=view&id=1IIIr7A8H1RBO5jLxAN5vTLaB2GG8cMOz).
 
 ```bash
 admin_menu() {
@@ -287,6 +289,7 @@ admin_menu() {
 }
 ```
 Kode ini akan memunculkan menu admin yang terdiri dari add user, delete user. remove user, dan logout.
+Output:
 ![image](https://drive.google.com/uc?export=view&id=1PhgaAK_Abvp_OYWS5wXRb5FlbecZdPgP)
 
 ```bash
