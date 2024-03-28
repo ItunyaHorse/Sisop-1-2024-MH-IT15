@@ -163,7 +163,7 @@ register
 
 Output:
 
-![image](https://drive.google.com/file/d/1JcTfnXq8srN3l3rlCKLvyogorq8EtHza/view?usp=sharing).
+![image](https://drive.google.com/file/d/1JcTfnXq8srN3l3rlCKLvyogorq8EtHza/view?usp=drive_link).
 
 ## Soal no 3
 Dikerjakan oleh **Michael Kenneth Salim (5027231008)**
