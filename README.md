@@ -89,6 +89,11 @@ Output:
 
 ![image](https://drive.google.com/uc?export=view&id=1Tx4lzv4OE2sRsir1fNOWDm6xnqTE6Dbh)
 
+## Soal no 2
+Dikerjakan oleh **Veri Rahman (5027231088)**
+
+Pada soal nomor 2 ini, kita diminta membuat 2 program yaitu login dan register.
+
 ## Soal no 3
 Dikerjakan oleh **Michael Kenneth Salim (5027231008)**
 
