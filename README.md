@@ -93,6 +93,77 @@ Output:
 Dikerjakan oleh **Veri Rahman (5027231088)**
 
 Pada soal nomor 2 ini, kita diminta membuat 2 program yaitu login dan register.
+```bash
+check_email() {
+    local email="$1"
+    if grep -q "^$email:" ~/soal2/users/users.txt; then
+        return 0
+    else
+        return 1
+    fi
+}
+```
+Kode check email diatas berfungsi untuk mengecek apakah email sudah terdaftar atau belum. Variabel local digunakan agar email tidak menjadi variabel global, kemudian fungsi conditional if berfungsi mengecek email jika terdaftar maka return 0 dan apabila belum terdaftar maka return 1.
+
+```bash
+register() {
+    echo "Welcome to Registration System"
+    echo "Enter your email:"
+    read email
+
+    if check_email "$email"; then
+        echo "Email sudah terdaftar. Silakan gunakan email lain."
+        log "REGISTER FAILED" "Registration failed. Email already exists: $email"
+        exit 1
+    fi
+
+    if [[ "$email" == *admin* ]]; then
+        type_user="admin"
+    else
+        type_user="user"
+    fi
+
+    echo "Enter your username:"
+    read username
+
+    echo "Enter a security question:"
+    read security_question
+echo "Enter the answer to your security question:"
+    read security_answer
+
+    while true; do
+        echo "Enter a password (minimum 8 characters,at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 symbol, and not same as username, birthdate, or name"
+        read -s password
+        if [[ ${#password} -ge 8 && "$password" =~ [A-Z] && "$password" =~ [a-z] && "$password" =~ [0-9] ]]; then
+            echo "User registered successfully!"
+            break
+        else
+            echo "Password does not meet criteria,Please try again."
+        fi
+    done
+
+```
+Kode diatas adalah kode register yang diminta. Kode ini terlebih dahulu memasukkan email, username, pertanyaan keamanan dan jawabannya, serta password. Kode "if check_email "$email" merujuk pada kode diatas dan apabila sudah terdaftar maka register gagal. Kode"if [[ "$email" == *admin* ]]" berfungsi mengecek apabila email mengandung kata admin maka akan menjadi tipe user admin, lalu kode "if [[ ${#password} -ge 8 && "$password" =~ [A-Z] && "$password" =~ [a-z] && "$password" =~ [0-9] ]]" berfungsi memberikan syarat minimal password yang akan dibuat kemudian apabila tidak memenuhi kriteria maka harus diulang kembali.
+
+```bash
+    encrypted_password=$(echo -n "$password" | base64)
+
+    echo "Email: $email, Username: $username, Security question: $security_question, Security answer: $security_answer, Encrypted password: $encrypted_password, Type user: $type_user" >> ~/soal2/users/users.txt
+    log "REGISTER SUCCESS" "User [$username] registered successfully"
+}
+
+log() {
+    echo "[$(date +'%d/%m/%Y %H:%M:%S')] [$1] $2" >> ~/soal2/users/auth.log
+}
+
+# Panggil fungsi registrasi
+register
+```
+"encrypted_password" berfungsi menyembunyikan password asli menjadi huruf dan angka acak, kemudian kode dibawahnya berfungsi menyimpan data register ke dalam users.txt dan log berfungsi mencatat semua register yang dilakukan.
+
+Output:
+
+![image](https://drive.google.com/file/d/1JcTfnXq8srN3l3rlCKLvyogorq8EtHza/view?usp=sharing).
 
 ## Soal no 3
 Dikerjakan oleh **Michael Kenneth Salim (5027231008)**
