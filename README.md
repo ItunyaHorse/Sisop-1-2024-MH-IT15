@@ -477,7 +477,9 @@ waktu=$(date +"%Y%m%d%H%M%S")
 ```
 
 kode "free -m" itu untuk display metricsnya
+
 kode "awk 'NR==2 {print $2","$3","$4","$5","$6","$7}'" dan kode "awk 'NR==3 {print $2","$3","$4}'" itu untuk mengambil data dari metrics tadi
+
 kode "date +"%Y%m%d%H%M%S"" itu untuk mengambil tanggal dan waktu
 
 ```bash
