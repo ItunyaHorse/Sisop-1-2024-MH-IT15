@@ -665,3 +665,13 @@ rm hourly_log.txt
 ```
 
 Kemudian skrip melanjutkan untuk mengekstrak nilai minimum, maksimum, dan rata-rata untuk setiap kolom (kemungkinan mewakili berbagai metrik seperti penggunaan memori, penggunaan swap, dll.) dari hourly_log.txt menggunakan perintah awk dan sort. Untuk setiap kolom, nilai minimum dan maksimum ditambahkannya ke file metrics_agg_$jam.log. Akhirnya, skrip menghapus file sementara hourly_log.txt.
+
+untuk mengotomatiskan skrip yang pertama tinggal menggunakan config cron:
+```bash
+# * * * * * /home/mken/SISOPraktikum/soal_4/minute_log.sh
+```
+
+untuk mengotomatiskan skrip yang kedua tinggal menggunakan config cron:
+```bash
+# 0 * * * * /home/mken/SISOPraktikum/soal_4/aggregate_minutes_to_hourly_log.sh
+```
