@@ -485,7 +485,7 @@ Seluruh output (baik pesan "FOUND" atau "NOT FOUND") akan diarahkan ke file "ima
 
 Soal ini tidak dapat saya selesaikan. Hal ini disebabkan karena saya mengalami suatu kendala berupa tidak bisa menemukan file yang tersebunyi di dalam jpg tersebut. 
 
-# Revisi no 3
+### Revisi no 3
 '''bash
   steghide extract -sf "$file" -xf "$file.txt" -p "" -q
   rahasia=$(cat "$file.txt" | base64 -d)
@@ -701,7 +701,7 @@ untuk mengotomatiskan skrip yang kedua tinggal menggunakan config cron:
 ```bash
 # 0 * * * * /home/mken/SISOPraktikum/soal_4/aggregate_minutes_to_hourly_log.sh
 ```
-# Kesalahan yang ditemukan
+### Kesalahan yang ditemukan
 ![Screenshot from 2024-03-30 20-56-01](https://github.com/ItunyaHorse/Sisop-1-2024-MH-IT15/assets/145765887/0548767c-e622-4924-bc9b-ac5e9827961f)
 
 Average yang bernilai 0, yang mana disebabkan oleh besarnya angka gigabytes.
