@@ -469,3 +469,19 @@ Soal ini tidak dapat saya selesaikan. Hal ini disebabkan karena saya mengalami s
 
 ## Soal no 4
 Dikerjakan oleh **semua**
+
+```bash
+mem=$(free -m | awk 'NR==2 {print $2","$3","$4","$5","$6","$7}')
+swap=$(free -m | awk 'NR==3 {print $2","$3","$4}')
+waktu=$(date +"%Y%m%d%H%M%S")
+```
+
+kode "free -m" itu untuk display metricsnya
+kode "awk 'NR==2 {print $2","$3","$4","$5","$6","$7}'" dan kode "awk 'NR==3 {print $2","$3","$4}'" itu untuk mengambil data dari metrics tadi
+kode "date +"%Y%m%d%H%M%S"" itu untuk mengambil tanggal dan waktu
+
+```bash
+echo 'mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size' >> metrics_$waktu.log
+echo "$mem,$swap,/home/mken,$(du -sh /home/mken | awk '{print $1}')" >> metrics_$waktu.log
+```
+
