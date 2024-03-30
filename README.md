@@ -675,3 +675,7 @@ untuk mengotomatiskan skrip yang kedua tinggal menggunakan config cron:
 ```bash
 # 0 * * * * /home/mken/SISOPraktikum/soal_4/aggregate_minutes_to_hourly_log.sh
 ```
+
+## Revisi
+
+no 2 di fix dan no 4 baru dikerjakan
