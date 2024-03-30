@@ -485,5 +485,13 @@ kode "date +"%Y%m%d%H%M%S"" itu untuk mengambil tanggal dan waktu
 ```bash
 echo 'mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size' >> metrics_$waktu.log
 echo "$mem,$swap,/home/mken,$(du -sh /home/mken | awk '{print $1}')" >> metrics_$waktu.log
+
+mv metrics_$waktu.log /home/mken/log
 ```
+
+kode "echo 'mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size' >> metrics_$waktu.log" ini untuk menambahkan baris header ke file log metrics_$waktu.log dan menentukan nama-nama metrik yang akan dicatat
+
+kode "echo "$mem,$swap,/home/mken,$(du -sh /home/mken | awk '{print $1}')" >> metrics_$waktu.log" itu untuk menambahkan metrik penggunaan memori dan disk bersama dengan jalur "/home/mken" dan ukurannya ke dalam file log
+
+kode "mv metrics_$waktu.log /home/mken/log" itu untuk memindahkan file log "metrics_$waktu.log" ke dalam direktori "/home/mken/log"
 
