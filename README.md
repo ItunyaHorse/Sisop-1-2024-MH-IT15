@@ -112,11 +112,12 @@ register() {
     read email
 
     if check_email "$email"; then
-        echo "Email sudah terdaftar. Silakan gunakan email lain."
+        echo "Email is already registered."
         log "REGISTER FAILED" "Registration failed. Email already exists: $email"
         exit 1
     fi
 
+    # Cek apakah email mengandung kata "admin"
     if [[ "$email" == *admin* ]]; then
         type_user="admin"
     else
@@ -134,16 +135,15 @@ echo "Enter the answer to your security question:"
     while true; do
         echo "Enter a password (minimum 8 characters,at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 symbol, and not same as username, birthdate, or name"
         read -s password
-        if [[ ${#password} -ge 8 && "$password" =~ [A-Z] && "$password" =~ [a-z] && "$password" =~ [0-9] ]]; then
+        if [[ ${#password} -ge 8 && "$password" =~ [A-Z] && "$password" =~ [a-z] && "$password" =~ [0-9] && "$password" =~ [[:punct:]] && "$password" != "$username" && "$password" != "$security_answer" ]]; then
             echo "User registered successfully!"
             break
         else
             echo "Password does not meet criteria,Please try again."
         fi
     done
-
 ```
-Kode diatas adalah kode register yang diminta. Kode ini terlebih dahulu memasukkan email, username, pertanyaan keamanan dan jawabannya, serta password. Kode "if check_email "$email" merujuk pada kode diatas dan apabila sudah terdaftar maka register gagal. Kode"if [[ "$email" == *admin* ]]" berfungsi mengecek apabila email mengandung kata admin maka akan menjadi tipe user admin, lalu kode "if [[ ${#password} -ge 8 && "$password" =~ [A-Z] && "$password" =~ [a-z] && "$password" =~ [0-9] ]]" berfungsi memberikan syarat minimal password yang akan dibuat kemudian apabila tidak memenuhi kriteria maka harus diulang kembali.
+Kode diatas adalah kode register yang diminta. Kode ini terlebih dahulu memasukkan email, username, pertanyaan keamanan dan jawabannya, serta password. Kode "if check_email "$email" merujuk pada kode diatas dan apabila sudah terdaftar maka register gagal. Kode"if [[ "$email" == *admin* ]]" berfungsi mengecek apabila email mengandung kata admin maka akan menjadi tipe user admin, lalu kode " if [[ ${#password} -ge 8 && "$password" =~ [A-Z] && "$password" =~ [a-z] && "$password" =~ [0-9] && "$password" =~ [[:punct:]] && "$password" != "$username" && "$password" != "$security_answer" ]]" berfungsi memberikan syarat minimal password yang akan dibuat kemudian apabila tidak memenuhi kriteria maka harus diulang kembali.
 
 ```bash
     encrypted_password=$(echo -n "$password" | base64)
@@ -190,44 +190,45 @@ Output:
 
 ```bash
 login() {
-    echo "Welcome to Login System"
     echo "Enter your email:"
     read email
 
-    if != grep -q "^$email:" ~/soal2/users/users.txt; then
-        echo "Email doesn't exists."
+    if check_email "$email"; then
+        echo "Email doesn't exist."
         log "LOGIN FAILED" "Failed login attempt. Email not registered: $email"
-        exit 1
+    	exit 1
     fi
 
     echo "Enter your password:"
     read -s password
-    encrypted_password=$(grep "^$email:" ~/soal2/users/users.txt | cut -d: -f5)
-    decrypted_password=$(echo "$encrypted_password" | base64 -d)
-    if [ "$password" = "$decrypted_password" ]; then
-       echo "Incorrect password."
-       log "LOGIN FAILED" "Failed login attempt. Incorrect password for email: $email"
-       exit 1
+
+    encrypted_password=$(grep "^$email:" ~/soal2/users/users.txt | cut -d: -f2)
+    hashed_password=$(encrypt_password "$password")
+
+    if [ "$encrypted_password" == "$hashed_password" ]; then
+        echo "Incorrect password."
+        log "LOGIN FAILED" "Failed login attempt. Incorrect password for email: $email"
+        exit 1
     fi
 
     echo "Login successful!"
     log "LOGIN SUCCESS" "User with email $email logged in successfully"
 
-    if [[ "$email" = *admin* ]]; then
-       admin_menu
+    if [[ "$email" == *admin* ]]; then
+        admin_menu
     else
-       echo "You don't have admin privileges. Welcome!"
+        echo "You don't have admin privileges. Welcome!"
     fi
 }
 ```
-Kode login berfungsi untuk masuk ke email yang telah diregister tadi. fungsi conditional if digunakan pada "if != grep -q "^$email:" ~/soal2/users/users.txt" berfungsi untukk mengecek apakah email tersedia atau tidak apabila tidak maka login gagal. lalu "if [ "$password" = "$decrypted_password" ]" berfungsi untuk mengecek apakah password sama apabila sama maka login berhasil.
+Kode login berfungsi untuk masuk ke email yang telah diregister tadi. fungsi conditional if digunakan pada " if check_email "$email"" berfungsi untukk mengecek apakah email tersedia atau tidak apabila tidak maka login gagal. lalu "if [ "$encrypted_password" == "$hashed_password" ]" berfungsi untuk mengecek apakah password sama apabila sama maka login berhasil.
 
 Output:
 
 ![image](https://drive.google.com/uc?export=view&id=1IIIr7A8H1RBO5jLxAN5vTLaB2GG8cMOz)
 
 ```bash
-admin_menu() {
+ admin_menu() {
     while true; do
         echo "Admin Menu:"
         echo "1. Add User"
@@ -238,51 +239,13 @@ admin_menu() {
 
         case $admin_choice in
             1)
-                echo "Enter new user email:"
-                read new_email
-                if !=  grep -q "^$new_email"; then
-                    echo "User already exists!"
-                else
-                    echo "Enter password:"
-                    read -s new_password
-                    echo "Enter security question:"
-                    read new_security_question
-                    echo "Enter security question answer:"
-                    read new_security_answer
-                    encrypted_password=$(encrypt_password "$new_password")
-                    add_user "$new_email" "$encrypted_password" "$new_security_question" "$new_security_answer"
-                    echo "User added successfully!"
-                    break
-                fi
+                add_user
                 ;;
             2)
-                echo "Enter email of user to edit:"
-                read edit_email
-                if != grep -q "^$edit_email"; then
-                    echo "Enter new password:"
-                    read -s new_password
-                    echo "Enter new security question:"
-                    read new_security_question
-                    echo "Enter new security question answer:"
-                    read new_security_answer
-                    encrypted_password=$(encrypt_password "$new_password")
-                    edit_user "$edit_email" "$encrypted_password" "$new_security_question" "$new_security_answer"
-                    echo "User details updated successfully!"
-                else
-                    echo "User not found!"
-                    break
-                fi
+                edit_user
                 ;;
             3)
-                echo "Enter email of user to delete:"
-                read delete_email
-                if ! grep -q "$delete_email"~/soal2/users/users.txt; then
-                     remove_user "$delete_email"
-                    echo "User deleted successfully!"
-                else
-                    echo "User not found!"
-                    break
-                fi
+                delete_user
                 ;;
             4)
                 echo "Logout successful!"
@@ -291,71 +254,126 @@ admin_menu() {
         esac
     done
 }
+
+add_user() {
+    echo "Enter new user email:"
+    read new_email
+
+    if check_email "$new_email"; then
+        echo "User already exists!"
+        return 1
+    fi
+
+    echo "Enter password:"
+    read -s new_password
+
+    echo "Enter security question:"
+    read new_security_question
+
+    echo "Enter security question answer:"
+    read new_security_answer
+
+    encrypted_password=$(encrypt_password "$new_password")
+
+    echo "$new_email:$encrypted_password:$new_security_question:$new_security_answer" >> ~/soal2/users/users.txt
+    log "USER ADDED" "New user added with email: $new_email"
+    echo "User added successfully!"
+    exit
+}
+
+edit_user() {
+    echo "Enter email of user to edit:"
+    read edit_email
+
+    if ! check_email "$edit_email"; then
+        echo "User not found!"
+        return 1
+    fi
+
+    echo "Enter new password:"
+    read -s new_password
+
+    echo "Enter new security question:"
+    read new_security_question
+
+    echo "Enter new security question answer:"
+    read new_security_answer
+
+    encrypted_password=$(encrypt_password "$new_password")
+
+    sed -i "s/^$edit_email:.*/$edit_email:$encrypted_password:$new_security_question:$new_security_answer/" ~/soal2/users/users.txt
+    log "USER EDITED" "User details edited for email: $edit_email"
+    echo "User details updated successfully!"
+    exit
+}
+
+delete_user() {
+    echo "Enter email of user to delete:"
+    read delete_email
+
+    if ! check_email "$delete_email"; then
+        echo "User not found!"
+        return 1
+    fi
+
+    sed -i "/^$delete_email:/d" ~/soal2/users/users.txt
+    log "USER DELETED" "User deleted with email: $delete_email"
+    echo "User deleted successfully!"
+    exit
+}
 ```
-Kode ini akan memunculkan menu admin yang terdiri dari add user, delete user. remove user, dan logout.
+Kode ini akan memunculkan menu admin yang terdiri dari add user, delete user. remove user, dan logout. add_user memungkinkan admin untuk menambahkan pengguna baru ke dalam database. Admin diminta untuk memasukkan informasi pengguna baru seperti email, kata sandi, pertanyaan keamanan, dan jawaban keamanan. Informasi ini kemudian disimpan dalam file database pengguna setelah dilakukan enkripsi pada kata sandi. Selain itu, fungsi ini juga mencatat tindakan penambahan pengguna baru ke dalam log.
+edit_user memungkinkan admin untuk mengedit informasi pengguna yang sudah ada di dalam database. Admin diminta untuk memasukkan email pengguna yang ingin diubah, lalu mengisi informasi baru seperti kata sandi, pertanyaan keamanan, dan jawaban keamanan. Informasi yang diubah kemudian akan diperbarui dalam file database pengguna, dan tindakan ini juga dicatat dalam log.
+delete_user memungkinkan admin untuk menghapus pengguna dari database. Admin diminta untuk memasukkan email pengguna yang ingin dihapus, dan setelah itu, pengguna tersebut akan dihapus dari file database pengguna. Seperti halnya fungsi lainnya, tindakan penghapusan pengguna juga dicatat dalam log.
 
 Output:
 
 ![image](https://drive.google.com/uc?export=view&id=1PhgaAK_Abvp_OYWS5wXRb5FlbecZdPgP)
 
-```bash
-add_user() {
-    echo "$1:$2:$3:$4" >> ~/soal2/users/users.txt
-    log "User added: $1"
-}
-edit_user() {
-    sed -i "/^$1:/s/:.*:/:$2:$3:$4/" >> ~/soal2/users/users.txt
-    log "User edited: $1"
-}
-encrypt_password() {
-    echo "$1" | sha256sum | cut -d ' ' -f 1
-}
-remove_user() {
-    sed -i "/^$1:/d" >> ~/soal2/users/users.txt
-    log "User removed: $1"
-}
-log() {
-    echo "[$(date +'%d/%m/%Y %H:%M:%S')] [$1] $2" >> ~/soal2/users/auth.log
-}
-
-# Program execution starts here
-main
-```
-Kode diatas berfungsi untuk membaca menu admin, adapun fungsi log untuk mencatat login email yang dilakukan, tetapi saya juga tidak tau apakah kode ini jalan atau tidak.
 
 ```bash
-get_security_question(){
-    correct_answer="$answer"
-    read -p "Security Question: $security_question" answer
-    if [[ "$answer" == "$correct_answer" ]]; then
-       echo "Your password is: $correct_answer"
-    else
-       echo "Password wrong."
-    fi
+get_security_question() {
+    local email=$1
+    local security_question=$(grep "^$email:" ~/soal2/users/users.txt | cut -d: -f3)
+    echo "$security_question"
 }
 
 forgot_password() {
     echo "Forgot Password?"
     echo "Enter your email:"
     read email
-    if != grep -q "$email"; then
-       security_question=$(get_security_question "$email")
-       echo "Security Question: $security_question"
-       echo "Enter your answer:"
-       read answer
-       saved_answer=$(grep "^$email:" users.txt | cut -d ':' -f 4)
-       if [ "$answer" = "$saved_answer" ]; then
-          echo "Your password is: $(get_password "$email")"
-          log "Password reset: $email"
-          else
-            echo "incorrect answer!"
-          fi
-    else
+
+    if ! check_email "$email"; then
         echo "User not found!"
+        exit 1
     fi
+
+    security_question=$(get_security_question "$email")
+    echo "Security Question: $security_question"
+
+    echo "Enter your answer:"
+    read answer
+
+    saved_answer=$(grep "^$email:" ~/soal2/users/users.txt | cut -d: -f4)
+
+    if [ "$answer" != "$saved_answer" ]; then
+        echo "Incorrect answer!"
+        exit 1
+    fi
+
+    echo "Your password is: $(decrypt_password "$email")"
+    log "PASSWORD RESET" "Password reset for email: $email"
+}
+
+decrypt_password() {
+    local email=$1
+    local encrypted_password=$(grep "^$email:" ~/soal2/users/users.txt | cut -d: -f2)
+    echo "$encrypted_password" | base64 -d
 }
 ```
-Kode ini untuk menjalankan program forgot password yang berisi email, pertanyaan keamanan dan jawaban, lalu apabila benar maka akan memunculkan password email tersebut. tetapi kode ini salah dikarenakan saya tidak menemukan solusinya.
+Kode ini untuk menjalankan program forgot password yang berisi email, pertanyaan keamanan dan jawaban, lalu apabila benar maka akan memunculkan password email tersebut. Fungsi "get_security_question()" ini mengambil pertanyaan keamanan yang terkait dengan email pengguna yang diberikan. Pertanyaan keamanan ini diperoleh dari file database pengguna dengan mencocokkan email yang diberikan dengan entri yang sesuai dalam file tersebut. Pertanyaan keamanan kemudian diambil dari entri yang ditemukan. Fungsi "forgot_password()"  memungkinkan pengguna untuk mereset kata sandi jika mereka lupa. Pengguna diminta untuk memasukkan email mereka, kemudian pertanyaan keamanan terkait ditampilkan dan pengguna diminta untuk menjawabnya. Jawaban yang diberikan oleh pengguna dibandingkan dengan jawaban yang disimpan dalam database. Jika jawaban sesuai, kata sandi yang lupa akan ditampilkan. Fungsi "decrypt_password()" bertanggung jawab untuk mendekripsi kata sandi yang terenkripsi dari file database pengguna. Pertama, fungsi ini mengambil kata sandi terenkripsi dari file database berdasarkan email pengguna yang diberikan. Kemudian, kata sandi tersebut didekripsi menggunakan base64 dan hasilnya dikembalikan.
+
+Pada soal no 2 ini, saya mengalami masalah pada edit user, delete user, dan forgot password
 
 ## Soal no 3
 Dikerjakan oleh **Michael Kenneth Salim (5027231008)**
