@@ -467,4 +467,5 @@ Seluruh output (baik pesan "FOUND" atau "NOT FOUND") akan diarahkan ke file "ima
 
 Soal ini tidak dapat saya selesaikan. Hal ini disebabkan karena saya mengalami suatu kendala berupa tidak bisa menemukan file yang tersebunyi di dalam jpg tersebut. 
 
- 
+## Soal no 4
+Dikerjakan oleh **semua**
