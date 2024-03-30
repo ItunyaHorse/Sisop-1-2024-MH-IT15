@@ -485,8 +485,34 @@ Seluruh output (baik pesan "FOUND" atau "NOT FOUND") akan diarahkan ke file "ima
 
 Soal ini tidak dapat saya selesaikan. Hal ini disebabkan karena saya mengalami suatu kendala berupa tidak bisa menemukan file yang tersebunyi di dalam jpg tersebut. 
 
+# Revisi no 3
+'''bash
+  steghide extract -sf "$file" -xf "$file.txt" -p "" -q
+  rahasia=$(cat "$file.txt" | base64 -d)
+  waktu=$(date +"%d/%m/%y %H:%M:%S")
+  alamat=$(realpath "$file.txt")
+
+  if [[ $rahasia == *http* ]];
+  then
+  echo "[$waktu] [FOUND] [$alamat]"
+  echo "$rahasia" > LinkKita.txt
+  wget -O RahasiaKita.jpg "$rahasia"
+  rm "$file.txt"
+  mv "image.log" ".."
+  mv "RahasiaKita.jpg" ".."
+  mv "LinkKita.txt" ".."
+  exit 0
+
+  else
+  echo "[$waktu] [NOT FOUND] [$alamat]"
+  rm "$file.txt"
+  fi >> image.log
+'''
+Text di decode terlebih dahulu menggunakan base64 -d sehingga bisa ditemukan link nya. Setelah itu, link yang ditemukan dimasukan ke LinkKita.txt lalu di download dengan -O untuk mengganti nama menjadi RahasiaKita.jpg.
+
+
 ## Soal no 4
-Dikerjakan oleh **semua**
+Dikerjakan oleh **Nicholas Emanuel Fade (5027231070) & Michael Kenneth Salim (5027231008)**
 
 ```bash
 mem=$(free -m | awk 'NR==2 {print $2","$3","$4","$5","$6","$7}')
@@ -675,6 +701,11 @@ untuk mengotomatiskan skrip yang kedua tinggal menggunakan config cron:
 ```bash
 # 0 * * * * /home/mken/SISOPraktikum/soal_4/aggregate_minutes_to_hourly_log.sh
 ```
+# Kesalahan yang ditemukan
+![Screenshot from 2024-03-30 20-56-01](https://github.com/ItunyaHorse/Sisop-1-2024-MH-IT15/assets/145765887/0548767c-e622-4924-bc9b-ac5e9827961f)
+
+Average yang bernilai 0, yang mana disebabkan oleh besarnya angka gigabytes.
+
 
 ## Revisi
 
