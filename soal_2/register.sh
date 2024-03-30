@@ -1,12 +1,12 @@
 #!/bin/bash
 
-check_email() {
-    local email="$1"
-    if grep -q "^$email:" ~/soal2/users/users.txt; then
-        return 0
-    else
-        return 1
-    fi
+check_email(){
+	if grep -q "^$email:" ~/soal2/users/users.txt; then
+	    return 0
+	else
+	    return 1
+	fi
+
 }
 
 # Fungsi untuk melakukan registrasi
@@ -16,7 +16,7 @@ register() {
     read email
 
     if check_email "$email"; then
-        echo "Email sudah terdaftar. Silakan gunakan email lain."
+        echo "Email is already registered."
         log "REGISTER FAILED" "Registration failed. Email already exists: $email"
         exit 1
     fi
@@ -39,7 +39,7 @@ echo "Enter the answer to your security question:"
     while true; do
         echo "Enter a password (minimum 8 characters,at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 symbol, and not same as username, birthdate, or name"
         read -s password
-        if [[ ${#password} -ge 8 && "$password" =~ [A-Z] && "$password" =~ [a-z] && "$password" =~ [0-9] ]]; then
+        if [[ ${#password} -ge 8 && "$password" =~ [A-Z] && "$password" =~ [a-z] && "$password" =~ [0-9] && "$password" =~ [[:punct:]] && "$password" != "$username" && "$password" != "$security_answer" ]]; then
             echo "User registered successfully!"
             break
         else
@@ -62,4 +62,3 @@ log() {
 
 # Panggil fungsi registrasi
 register
-
